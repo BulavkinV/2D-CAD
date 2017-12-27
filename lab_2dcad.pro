@@ -25,10 +25,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    logger.cpp \
+    segment2p.cpp \
+    point2d.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    logger.h \
+    segment2p.h \
+    point2d.h
 
 FORMS += \
         mainwindow.ui
