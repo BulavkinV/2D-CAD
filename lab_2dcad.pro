@@ -28,13 +28,18 @@ SOURCES += \
         mainwindow.cpp \
     logger.cpp \
     segment2p.cpp \
-    point2d.cpp
+    point2d.cpp \
+    constraint.cpp
 
 HEADERS += \
         mainwindow.h \
     logger.h \
     segment2p.h \
-    point2d.h
+    point2d.h \
+    constraint.h
 
 FORMS += \
         mainwindow.ui
+
+DISTFILES += \
+    Arch.md

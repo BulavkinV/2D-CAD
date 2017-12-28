@@ -7,7 +7,7 @@
 class Logger
 {
 private:
-    std::ifstream logfile;
+    std::ofstream logfile;
 public:
     Logger(const std::string&);
 };
