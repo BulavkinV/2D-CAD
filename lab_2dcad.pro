@@ -29,14 +29,18 @@ SOURCES += \
     logger.cpp \
     segment2p.cpp \
     point2d.cpp \
-    constraint.cpp
+    constraint.cpp \
+    geometryobject.cpp \
+    geometryinterface.cpp
 
 HEADERS += \
         mainwindow.h \
     logger.h \
     segment2p.h \
     point2d.h \
-    constraint.h
+    constraint.h \
+    geometryobject.h \
+    geometryinterface.h
 
 FORMS += \
         mainwindow.ui
