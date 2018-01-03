@@ -2,5 +2,5 @@
 
 GeometryInterface::GeometryInterface()
 {
-
+    containsConstraints = false;
 }

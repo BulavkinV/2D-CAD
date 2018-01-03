@@ -1,6 +1,8 @@
-#include "mainwindow.h"
 #include <QApplication>
+#include "mainwindow.h"
+#include "gui_buttonarea.h"
 
+#include <vector>
 #include <string>
 
 #include "logger.h"
@@ -12,10 +14,13 @@ int main(int argc, char *argv[])
 {
     Logger log(log_filename);
 
-    QApplication a(argc, argv);
-    MainWindow w;
+    QApplication app(argc, argv);
 
-    w.show();
+    MainWindow mw;
+    GUI_ButtonArea ba(&mw);
 
-    return a.exec();
+    ba.show();
+    mw.show();
+
+    return app.exec();
 }

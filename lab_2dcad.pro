@@ -31,7 +31,8 @@ SOURCES += \
     point2d.cpp \
     constraint.cpp \
     geometryobject.cpp \
-    geometryinterface.cpp
+    geometryinterface.cpp \
+    gui_buttonarea.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -40,10 +41,14 @@ HEADERS += \
     point2d.h \
     constraint.h \
     geometryobject.h \
-    geometryinterface.h
+    geometryinterface.h \
+    gui_buttonarea.h
 
 FORMS += \
         mainwindow.ui
 
 DISTFILES += \
     Arch.md
+
+RESOURCES += \
+    buttonareaicons.qrc

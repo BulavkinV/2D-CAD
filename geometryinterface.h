@@ -2,12 +2,17 @@
 #define GEOMETRYINTERFACE_H
 
 #include <geometryobject.h>
+#include <constraint.h>
+
+#include <vector>
 
 class GeometryInterface
 {
 private:
-    vector<GeometryObject*> objects;
-    vector<Constraint*> constraints;
+    std::vector<GeometryObject*> objects;
+    std::vector<Constraint*> constraints;
+
+    bool containsConstraints;
 public:
     GeometryInterface();
     bool add_segment();
