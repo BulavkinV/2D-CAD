@@ -14,14 +14,6 @@
    <string>2D CAD</string>
   </property>
   <widget class="QWidget" name="centralWidget"/>
-  <widget class="QStatusBar" name="statusBar">
-   <property name="cursor">
-    <cursorShape>PointingHandCursor</cursorShape>
-   </property>
-   <property name="mouseTracking">
-    <bool>false</bool>
-   </property>
-  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

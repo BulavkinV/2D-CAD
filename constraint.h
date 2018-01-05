@@ -13,7 +13,8 @@ enum class ConstraintType: unsigned {
     AngleBetween,
     DistanceBetween,
     FixedPoint,
-    FixedLength
+    FixedLength,
+    BelongsTo
 };
 
 class Constraint

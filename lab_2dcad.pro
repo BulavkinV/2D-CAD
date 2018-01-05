@@ -15,7 +15,8 @@ TEMPLATE = app
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
 # deprecated API in order to know how to port your code away from it.
-DEFINES += QT_DEPRECATED_WARNINGS
+DEFINES += QT_DEPRECATED_WARNINGS \
+    ENABLE_DEBUG
 
 # You can also make your code fail to compile if you use deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -25,24 +26,30 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp \
     logger.cpp \
     segment2p.cpp \
     point2d.cpp \
     constraint.cpp \
     geometryobject.cpp \
     geometryinterface.cpp \
-    gui_buttonarea.cpp
+    gui_buttonarea.cpp \
+    gui_statusbar.cpp \
+    gui_centralwidget.cpp \
+    gui_scene.cpp \
+    gui_mainwindow.cpp
 
 HEADERS += \
-        mainwindow.h \
     logger.h \
     segment2p.h \
     point2d.h \
     constraint.h \
     geometryobject.h \
     geometryinterface.h \
-    gui_buttonarea.h
+    gui_buttonarea.h \
+    gui_statusbar.h \
+    gui_centralwidget.h \
+    gui_scene.h \
+    gui_mainwindow.h
 
 FORMS += \
         mainwindow.ui

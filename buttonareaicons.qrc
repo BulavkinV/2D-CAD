@@ -1,13 +1,13 @@
 <RCC>
     <qresource prefix="/ButtonArea/Icons">
-        <file>Resources/angle_icon.png</file>
-        <file>Resources/belongs_icon.png</file>
-        <file>Resources/cursor_icon.png</file>
-        <file>Resources/distance_icon.png</file>
-        <file>Resources/fixed_icon.png</file>
-        <file>Resources/input_icon.png</file>
-        <file>Resources/length_icon.png</file>
-        <file>Resources/parallel_icon.png</file>
-        <file>Resources/perpendicular_icon.png</file>
+        <file>Resources/Angle_icon.png</file>
+        <file>Resources/Belongs_icon.png</file>
+        <file>Resources/Cursor_icon.png</file>
+        <file>Resources/Distance_icon.png</file>
+        <file>Resources/Fixed_icon.png</file>
+        <file>Resources/Input_icon.png</file>
+        <file>Resources/Length_icon.png</file>
+        <file>Resources/Parallel_icon.png</file>
+        <file>Resources/Perpendicular_icon.png</file>
     </qresource>
 </RCC>
