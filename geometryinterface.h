@@ -4,29 +4,42 @@
 #include <geometryobject.h>
 #include <constraint.h>
 #include <point2d.h>
+#include <segment2p.h>
+#include <solver.h>
+
+#include <exception>
 
 #include <vector>
 #include <QPointF>
 #include <QMap>
 
+#ifdef ENABLE_DEBUG
+#include <QDebug>
+#endif
+
 class GeometryInterface
 {
 private:
+    Solver solver;
     QMap<object_id_t, GeometryObject*> objects;
-    std::vector<Constraint> constraints;
+    QMap<constraint_id_t, Constraint*> constraints;
 
     object_id_t new_id;
+    constraint_id_t const_id;
     bool containsConstraints;
 public:
     GeometryInterface();
 
-    bool add_segment();
+    object_id_t addSegment(object_id_t, object_id_t);
     object_id_t add_point(QPointF);
-    bool add_constraint();
+    constraint_id_t addConstraint(ConstraintType, const QList<object_id_t>&);
+    constraint_id_t makeConstraintByPtrs(ConstraintType, GeometryObject*, GeometryObject*);
 
     GeometryObject* getObjectById(object_id_t);
+    object_id_t getIdByObject(GeometryObject*);
 
-
+    Segment2P* findLineByPoint(Point2D* _point);
+    void movePoint(Point2D *point, QPointF position);
 };
 
 #endif // GEOMETRYINTERFACE_H

@@ -7,8 +7,9 @@
 #include <cmath>
 #include <vector>
 
-const double point_default_width = 3.;
-const double point_default_height = 3.;
+const QPointF upper_left_point{-4., -4.};
+const QPointF bottom_right_point{4., 4.};
+
 
 class Point2D : public GeometryObject, public QGraphicsRectItem
 {
@@ -18,6 +19,10 @@ private:
 public:
     Point2D(double _x=0., double _y=0., object_id_t _id= 1);
     Point2D(QPointF _pos, object_id_t _id=1);
+
+    QPointF getPos();
+    void move(QPointF);
+
 
     static double distance_between(const Point2D&, const Point2D&);
 

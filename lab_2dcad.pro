@@ -38,7 +38,8 @@ SOURCES += \
     gui_scene.cpp \
     gui_mainwindow.cpp \
     notimplementedexception.cpp \
-    mainwindowwrongstate.cpp
+    mainwindowwrongstate.cpp \
+    solver.cpp
 
 HEADERS += \
     logger.h \
@@ -53,7 +54,8 @@ HEADERS += \
     gui_scene.h \
     gui_mainwindow.h \
     notimplementedexception.h \
-    mainwindowwrongstate.h
+    mainwindowwrongstate.h \
+    solver.h
 
 FORMS += \
         mainwindow.ui

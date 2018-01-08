@@ -3,7 +3,9 @@
 
 #include <geometryobject.h>
 
-#include <vector>
+#include <QList>
+
+typedef unsigned constraint_id_t;
 
 enum class ConstraintType: unsigned {
     None,
@@ -20,10 +22,11 @@ enum class ConstraintType: unsigned {
 class Constraint
 {
 private:
+    constraint_id_t id;
     ConstraintType type;
-    std::vector<object_id_t> objects;
+    QList<object_id_t> objects;
 public:
-    Constraint();
+    Constraint(ConstraintType, const QList<object_id_t>&, constraint_id_t);
 };
 
 #endif // CONSTRAINT_H

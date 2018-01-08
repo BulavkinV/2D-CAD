@@ -15,8 +15,14 @@ class GeometryObject
 protected:
     object_id_t objectID;
     GeometryObjectType type;
+
+    bool blocked;
 public:
     GeometryObject(GeometryObjectType, object_id_t);
+
+    GeometryObjectType getType();
+    bool isBlocked();
+    void setBlock(bool);
 
     virtual void notused() = 0;
 };
