@@ -17,6 +17,8 @@ protected:
     GeometryObjectType type;
 public:
     GeometryObject(GeometryObjectType, object_id_t);
+
+    virtual void notused() = 0;
 };
 
 #endif // GEOMETRYOBJECT_H

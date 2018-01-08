@@ -36,7 +36,9 @@ SOURCES += \
     gui_statusbar.cpp \
     gui_centralwidget.cpp \
     gui_scene.cpp \
-    gui_mainwindow.cpp
+    gui_mainwindow.cpp \
+    notimplementedexception.cpp \
+    mainwindowwrongstate.cpp
 
 HEADERS += \
     logger.h \
@@ -49,7 +51,9 @@ HEADERS += \
     gui_statusbar.h \
     gui_centralwidget.h \
     gui_scene.h \
-    gui_mainwindow.h
+    gui_mainwindow.h \
+    notimplementedexception.h \
+    mainwindowwrongstate.h
 
 FORMS += \
         mainwindow.ui

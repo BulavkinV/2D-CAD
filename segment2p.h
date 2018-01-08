@@ -3,8 +3,9 @@
 
 #include "geometryobject.h"
 #include "point2d.h"
+#include <QGraphicsLineItem>
 
-class Segment2P : public GeometryObject
+class Segment2P : public GeometryObject, public QGraphicsLineItem
 {
 private:
     Point2D* const p1;

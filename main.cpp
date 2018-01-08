@@ -5,6 +5,7 @@
 #include "gui_centralwidget.h"
 #include "gui_scene.h"
 
+#include <geometryinterface.h>
 #include <vector>
 #include <string>
 #include <QString>
@@ -20,6 +21,7 @@ const std::string log_filename = "2dcad.log";
 
 int main(int argc, char *argv[])
 {
+    GeometryInterface interface;
     Logger log(log_filename);
 
     QApplication app(argc, argv);
@@ -27,8 +29,8 @@ int main(int argc, char *argv[])
     GUI_MainWindow window;
     GUI_ButtonArea buttons(&window);
     GUI_StatusBar status_bar;
-    GUI_Scene scene;
-    GUI_CentralWidget central_wdidget(&scene);
+    GUI_Scene scene(&window, &interface);
+    GUI_CentralWidget central_wdidget(&window, &scene);
 
     window.setCentralWidget(&central_wdidget);
     window.setStatusBar(&status_bar);
