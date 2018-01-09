@@ -27,6 +27,9 @@ private:
     QList<object_id_t> objects;
 public:
     Constraint(ConstraintType, const QList<object_id_t>&, constraint_id_t);
+
+    ConstraintType getType();
+    QList<object_id_t> getObjects();
 };
 
 #endif // CONSTRAINT_H

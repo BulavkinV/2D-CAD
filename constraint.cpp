@@ -5,3 +5,13 @@ Constraint::Constraint(ConstraintType _type, const QList<object_id_t> &_list, co
 {
     objects = _list;
 }
+
+ConstraintType Constraint::getType()
+{
+    return type;
+}
+
+QList<object_id_t> Constraint::getObjects()
+{
+    return objects;
+}

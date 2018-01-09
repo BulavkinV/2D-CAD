@@ -123,6 +123,7 @@ void GUI_Scene::mouseMoveEventDispather(QPointF pos)
             }
             break;
         case(GUI_MainWindow::States::Constraints):
+        default:
             throw NotImplementedException();
             break;
     }

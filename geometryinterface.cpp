@@ -1,7 +1,8 @@
 #include "geometryinterface.h"
 
-GeometryInterface::GeometryInterface() : solver()
+GeometryInterface::GeometryInterface()
 {
+    solver = new Solver(this);
     containsConstraints = false;
     new_id = 1;
     const_id = 1;
@@ -32,6 +33,11 @@ object_id_t GeometryInterface::getIdByObject(GeometryObject *ptr) {
     }
 
     return 0;
+}
+
+QList<Constraint *> GeometryInterface::getConstraintsList()
+{
+    return constraints.values();
 }
 
 object_id_t GeometryInterface::addSegment(object_id_t first_p, object_id_t second_p) {
@@ -68,7 +74,7 @@ for (const auto& item: _list)
 
     ++const_id;
 
-    solver.resolve();
+    solver->resolve(getConstraintsList());
 
     return const_id-1;
 }
@@ -108,5 +114,17 @@ void GeometryInterface::movePoint(Point2D *point, QPointF position) {
     resolving = resolving || segment->isBlocked();
 
     if (resolving)
-        solver.resolve();
+        solver->resolve(getConstraintsList());
+}
+
+
+void GeometryInterface::replacePoint(Point2D *point, QPointF position) {
+     point->move(position);
+
+     Segment2P *segment = findLineByPoint(point);
+     QList<Point2D*> list = segment->getPointsList();
+     if (point == list[0])
+         segment->movePoint(Segment2P::PointPosition::First, position);
+     if (point == list[1])
+         segment->movePoint(Segment2P::PointPosition::Second, position);
 }
