@@ -29,6 +29,8 @@ class Solver
 
     std::vector<std::vector<double>> matrix;
     std::vector<double> vect;
+
+    bool on_rebuild;
 public:
     Solver(GeometryInterface*);
 
@@ -41,7 +43,7 @@ public:
     bool containsConstraint(Constraint*);
     QList<unsigned> addObject(object_id_t);
     QList<unsigned> addPoint(Point2D*);
-    unsigned allocNewConstraint(Constraint*);
+    unsigned addNewConstraint(Constraint*);
     std::vector<double> gauss(std::vector<std::vector<double>>);
 
     QList<unsigned> getIndicies(object_id_t);
@@ -49,6 +51,9 @@ public:
 
     void appendConstraint(Constraint*, QList<unsigned>);
     void addSamePointConstraint(Constraint*, QList<unsigned>);
+
+    void setRebuild(bool);
+    bool isRebuild();
 
 #ifdef ENABLE_DEBUG
     void debugPrintMatrix(const std::vector<std::vector<double>>&);

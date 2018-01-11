@@ -58,8 +58,8 @@ qWarning() << "Added new segment " << new_id << " between " << first->getPos() <
     return new_id - 1;
 }
 
-constraint_id_t GeometryInterface::addConstraint(ConstraintType _type, const QList<object_id_t>& _list) {
-    Constraint* ptr = new Constraint(_type, _list, const_id);
+constraint_id_t GeometryInterface::addConstraint(ConstraintType _type, const QList<object_id_t>& _list, const QList<double> _value) {
+    Constraint* ptr = new Constraint(_type, _list, const_id, _value);
     constraints.insert(const_id, ptr);
 
     for(const auto& item: _list) {
@@ -79,10 +79,10 @@ for (const auto& item: _list)
     return const_id-1;
 }
 
-constraint_id_t GeometryInterface::makeConstraintByPtrs(ConstraintType _type, GeometryObject *_first, GeometryObject *_second)
+constraint_id_t GeometryInterface::makeConstraintByPtrs(ConstraintType _type, GeometryObject *_first, GeometryObject *_second, const QList<double>& _value)
 {
     QList<object_id_t> list{this->getIdByObject(_first), this->getIdByObject(_second)};
-    return addConstraint(_type, list);
+    return addConstraint(_type, list, _value);
 }
 
 Segment2P* GeometryInterface::findLineByPoint(Point2D* _point) {

@@ -8,19 +8,23 @@ Solver::Solver(GeometryInterface* _interface)
 void Solver::resolve(const QList<Constraint *>& _constraints)
 {
     for (const auto& constraint: _constraints) {
+        //get obj list
         QList<object_id_t> list = constraint->getObjects();
+        //set indicies for objects
         QList<unsigned> indicies;
         for (const auto& obj_id: list) {
             if (containsObject(obj_id)) {
                 indicies.append(getIndicies(obj_id));
             }
             else {
+                //add obj to mapper and increase indicies
                 indicies.append(addObject(obj_id));
             }
         }
         appendConstraint(constraint, indicies);
     }
 
+    setRebuild(true);
     bool exit_cond;
     do {
         std::vector<std::vector<double>> A = matrix;
@@ -119,10 +123,18 @@ QList<unsigned> Solver::getIndicies(object_id_t _id)
     return mapper[_id];
 }
 
+//check if ptr is in const_mapper
+bool Solver::containsConstraint(Constraint * _ptr)
+{
+    return std::find(const_mapper.keyBegin(), const_mapper.keyEnd(), _ptr) != const_mapper.keyEnd();
+}
+
+//return index from const_mapper
 unsigned Solver::getConstraintIndex(Constraint *_ptr)
 {
     return const_mapper[_ptr];
 }
+
 
 void Solver::reset()
 {
@@ -147,41 +159,38 @@ void Solver::backMap()
     }
 }
 
+//check if an obj_id in mapper
 bool Solver::containsObject(object_id_t _id)
 {
     return std::find(mapper.keyBegin(), mapper.keyEnd(), _id) != mapper.keyEnd();
 }
 
-bool Solver::containsConstraint(Constraint * _ptr)
-{
-    return std::find(const_mapper.keyBegin(), const_mapper.keyEnd(), _ptr) != const_mapper.keyEnd();
-}
-
+//adds point to matrix and vector and gets indicies
 QList<unsigned> Solver::addPoint(Point2D *point) {
     QList<unsigned> result;
     QList<double> parameters{point->getPos().x(), point->getPos().y()};
-    bool rebuilding = parameters_init_vals.size() > matrix.size();
 
+    //!!
     for (const auto& parameter: parameters) {
         result.push_back(matrix.size());
-        matrix.resize(matrix.size()+1);
-        for (auto &str: matrix) {
-            str.resize(matrix.size(), 0.);
-        }
-        vect.resize(matrix.size(), 0.);
-        if (rebuilding) {
+        vect.resize(matrix.size()+1, 0.);
+        if (isRebuild()) {
             vect[result.last()] = parameters_current_vals[result.last()] - parameters_init_vals[result.last()];
         }
         else {
             parameters_init_vals.push_back(parameter);
             parameters_current_vals.push_back(parameter);
         }
+        matrix.resize(matrix.size()+1);
+        for (auto &str: matrix) {
+            str.resize(matrix.size(), 0.);
+        }
     }
 
     return result;
 }
 
-unsigned Solver::allocNewConstraint(Constraint* _constraint)
+unsigned Solver::addNewConstraint(Constraint* _constraint)
 {
     unsigned result = matrix.size();
 
@@ -190,14 +199,20 @@ unsigned Solver::allocNewConstraint(Constraint* _constraint)
         str.resize(matrix.size(), 0.);
     }
     vect.resize(matrix.size(), 0.);
-    parameters_init_vals.resize(matrix.size(), 1.);
-    parameters_current_vals.resize(matrix.size(), 1.);
-
+    if (isRebuild()) {
+        vect[result] = parameters_current_vals[result] - parameters_init_vals[result];
+    }
+    else
+    {
+        parameters_init_vals.resize(matrix.size(), 1.);
+        parameters_current_vals.resize(matrix.size(), 1.);
+    }
     const_mapper[_constraint] = result;
 
     return result;
 }
 
+//adds object to matrix and returns indicies
 QList<unsigned> Solver::addObject(object_id_t _id) {
     GeometryObject* object = interface->getObjectById(_id);
     QList<unsigned> indicies;
@@ -211,14 +226,14 @@ QList<unsigned> Solver::addObject(object_id_t _id) {
         QList<Point2D*> point_list = segment->getPointsList();
         object_id_t point_id = interface->getIdByObject(static_cast<GeometryObject*>(point_list[0]));
         if (containsObject(point_id)) {
-            //indicies.append(getIndicies());
+            indicies.append(getIndicies(point_id));
         }
         else {
             indicies.append(addObject(point_id));
         }
         point_id = interface->getIdByObject(static_cast<GeometryObject*>(point_list[1]));
         if (containsObject(point_id)) {
-            //indicies.append(getIndicies());
+            indicies.append(getIndicies(point_id));
         }
         else {
             indicies.append(addObject(point_id));
@@ -230,7 +245,7 @@ QList<unsigned> Solver::addObject(object_id_t _id) {
     return indicies;
 }
 
-
+//appends constraint to matrix
 void Solver::appendConstraint(Constraint *_constraint, QList<unsigned> _indicies)
 {
     switch(_constraint->getType()) {
@@ -249,7 +264,10 @@ void Solver::addSamePointConstraint(Constraint* _constraint, QList<unsigned> _in
         lambda_ind = getConstraintIndex(_constraint);
     }
     else {
-        lambda_ind = allocNewConstraint(_constraint);
+        if (isRebuild()) {
+            qWarning() << "Adding new constraint on rebuild!!!";
+        }
+        lambda_ind = addNewConstraint(_constraint);
     }
 
 
@@ -286,6 +304,16 @@ void Solver::addSamePointConstraint(Constraint* _constraint, QList<unsigned> _in
     matrix[iy2][iy2] += 1.+2.*parameters_current_vals[lambda_ind];
     matrix[iy2][iy1] += -2.*parameters_current_vals[lambda_ind];
     matrix[iy2][lambda_ind] += 2.*(y2-y1);
+}
+
+void Solver::setRebuild(bool _arg)
+{
+    on_rebuild = _arg;
+}
+
+bool Solver::isRebuild()
+{
+    return on_rebuild;
 }
 
 
