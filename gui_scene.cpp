@@ -39,6 +39,9 @@ void GUI_Scene::endLine(QPointF end_pos, const QList<QGraphicsItem*>& itemsAtPos
                 Point2D* second_to_const = dynamic_cast<Point2D*>(obj);
 
                 interface->makeConstraintByPtrs(ConstraintType::SamePoint, first_to_const, second_to_const);
+
+                //in future -> make all constraints and delete exscess before resolution
+                break;
         }
     }
 
@@ -86,10 +89,19 @@ void GUI_Scene::mousePressEventDispather(QPointF pos, const QList<QGraphicsItem*
             }
             break;
         case(GUI_MainWindow::States::Constraints): {
-                //make this
-                mw->getCurrentConstraint();
-                for(const auto& item : itemsAtPos)
-                    qWarning() << item->pos();
+                switch(mw->getCurrentConstraint()) {
+                    case(ConstraintType::Vertical):
+                        interface->createConstraint(ConstraintType::Vertical, fromSceneToObjects(itemsAtPos), {GeometryObjectType::Segment}, 1);
+                        break;
+                    case(ConstraintType::Horisontal):
+                        interface->createConstraint(ConstraintType::Horisontal, fromSceneToObjects(itemsAtPos), {GeometryObjectType::Segment}, 1);
+                        break;
+                    case(ConstraintType::FixedPoint):
+                        interface->createConstraint(ConstraintType::FixedPoint, fromSceneToObjects(itemsAtPos), {GeometryObjectType::Point}, 1);
+                        break;
+                    default:
+                        throw NotImplementedException();
+                }
             }
             break;
         case(GUI_MainWindow::States::None):
@@ -124,8 +136,18 @@ void GUI_Scene::mouseMoveEventDispather(QPointF pos)
             break;
         case(GUI_MainWindow::States::Constraints):
         default:
-            throw NotImplementedException();
+            //throw NotImplementedException();
             break;
     }
 
+}
+
+QList<GeometryObject *> GUI_Scene::fromSceneToObjects(const QList<QGraphicsItem *> & _on_screen)
+{
+    QList<GeometryObject*> result;
+
+    for (const auto& item: _on_screen) {
+        result.push_back({dynamic_cast<GeometryObject*>(item)});
+    }
+    return result;
 }

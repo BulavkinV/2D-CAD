@@ -16,7 +16,9 @@ enum class ConstraintType: unsigned {
     DistanceBetween,
     FixedPoint,
     FixedLength,
-    BelongsTo
+    BelongsTo,
+    Vertical,
+    Horisontal
 };
 
 class Constraint

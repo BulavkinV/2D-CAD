@@ -63,6 +63,12 @@ QString GUI_MainWindow::getCurrentConstraintString() {
             return "Perpendicular";
         case(ConstraintType::SamePoint):
             return "SamePoint";
+        case(ConstraintType::Vertical):
+            return "Vertical";
+            break;
+        case(ConstraintType::Horisontal):
+            return "Horisontal";
+            break;
         case(ConstraintType::None):
         default:
             return "None";
@@ -101,6 +107,12 @@ void GUI_MainWindow::setCurrentConstraint(ConstraintType _newct, bool writeToSta
                 break;
             case(ConstraintType::BelongsTo):
                 msg += "принадлежность отрезку";
+                break;
+            case(ConstraintType::Vertical):
+                msg += "вертикальность";
+                break;
+            case(ConstraintType::Horisontal):
+                msg += "горизонтальность";
                 break;
             default:
                 msg += "неопределено";
@@ -145,6 +157,12 @@ void GUI_MainWindow::actionDispather(QString action)
         }
         else if (action == "Belongs") {
             setCurrentConstraint(ConstraintType::BelongsTo);
+        }
+        else if (action == "Vertical") {
+            setCurrentConstraint(ConstraintType::Vertical);
+        }
+        else if (action == "Horisontal") {
+            setCurrentConstraint(ConstraintType::Horisontal);
         }
         else {
             setCurrentConstraint(ConstraintType::None);

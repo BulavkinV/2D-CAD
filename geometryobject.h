@@ -22,7 +22,7 @@ public:
 
     GeometryObjectType getType();
     bool isBlocked();
-    void setBlock(bool);
+    virtual void setBlock(bool);
 
     virtual void notused() = 0;
 };

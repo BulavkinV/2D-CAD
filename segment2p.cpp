@@ -22,3 +22,11 @@ void Segment2P::movePoint(Segment2P::PointPosition num, QPointF position)
         this->setLine(line().p1().x(), line().p1().y(), position.x(), position.y());
     }
 }
+
+void Segment2P::setBlock(bool)
+{
+    blocked = true;
+
+    p1->setBlock(true);
+    p2->setBlock(true);
+}

@@ -34,9 +34,11 @@ public:
 
     object_id_t addSegment(object_id_t, object_id_t);
     object_id_t add_point(QPointF);
+
     constraint_id_t addConstraint(ConstraintType _type, const QList<object_id_t>& _list, const QList<double> _value = {});
     constraint_id_t makeConstraintByPtrs(ConstraintType _type, GeometryObject *_first, GeometryObject *_second, const QList<double>& _value = {});
-
+    constraint_id_t createConstraint(const ConstraintType _type, const QList<GeometryObject*>& _objects, const QList<GeometryObjectType>& _aceptable_types, unsigned _number,
+                                                        const QList<double>& _value = {});
     GeometryObject* getObjectById(object_id_t);
     object_id_t getIdByObject(GeometryObject*);
     QList<Constraint*> getConstraintsList();

@@ -11,7 +11,8 @@
 #include <QDebug>
 #endif
 
-const std::vector<QString> ba_actions{"Cursor", "Input", "Parallel",
+const std::vector<QString> ba_actions{"Cursor", "Input", "Vertical",
+                                      "Horisontal", "Parallel",
                                        "Perpendicular", "Angle", "Distance",
                                       "Fixed", "Length", "Belongs"};
 

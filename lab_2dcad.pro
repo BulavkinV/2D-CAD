@@ -39,7 +39,8 @@ SOURCES += \
     gui_mainwindow.cpp \
     notimplementedexception.cpp \
     mainwindowwrongstate.cpp \
-    solver.cpp
+    solver.cpp \
+    drawingredifinedexception.cpp
 
 HEADERS += \
     logger.h \
@@ -55,7 +56,8 @@ HEADERS += \
     gui_mainwindow.h \
     notimplementedexception.h \
     mainwindowwrongstate.h \
-    solver.h
+    solver.h \
+    drawingredifinedexception.h
 
 FORMS += \
         mainwindow.ui

@@ -40,6 +40,8 @@ public:
     //void mousePressEvent(QGraphicsSceneMouseEvent*);
     void mousePressEventDispather(QPointF, const QList<QGraphicsItem*> &);
     void mouseMoveEventDispather(QPointF);
+
+    static QList<GeometryObject*> fromSceneToObjects(const QList<QGraphicsItem*>&);
 };
 
 #endif // GUI_SCENE_H

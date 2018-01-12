@@ -31,6 +31,8 @@ public:
     QList<Point2D*> getPointsList();
     void movePoint(PointPosition, QPointF);
 
+    virtual void setBlock(bool) override;
+
     void notused() override {}
 };
 

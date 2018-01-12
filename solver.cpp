@@ -33,8 +33,14 @@ void Solver::resolve(const QList<Constraint *>& _constraints)
         for (unsigned i=0; i!=A.size(); ++i) {
             A[i].push_back(-b[i]);
         }
-
+        //checkMatrixBeforeExec(A);
+        debugPrintMatrix(A);
         b = gauss(A);
+        debugPrintMatrix(A);
+        if (std::isnan(b[0])) {
+            qWarning() << "NaN";
+            debugStateOutput();
+        }
         parameters_current_vals = parameters_current_vals + b;
         qWarning() << "Result:" << norm(b);
         debugPrintVector(b);
@@ -42,7 +48,6 @@ void Solver::resolve(const QList<Constraint *>& _constraints)
         rebuild(_constraints);
     } while(exit_cond);
 
-    //back mapping
     backMap();
     reset();
 }
@@ -52,6 +57,8 @@ void Solver::rebuild(const QList<Constraint *> & _constraints) {
         str.assign(matrix.size(), 0.);
     }
     vect.assign(vect.size(), 0.);
+
+    matrixInitialise();
 
     for (const auto& constraint: _constraints) {
         QList<object_id_t> list = constraint->getObjects();
@@ -73,7 +80,8 @@ void Solver::rebuild(const QList<Constraint *> & _constraints) {
     //system("sleep 10");
 }
 
-std::vector<double> Solver::gauss(std::vector<std::vector<double>> A) {
+// gauss method (must work)
+std::vector<double> Solver::gauss(std::vector<std::vector<double>>& A) {
     int n = A.size();
 
     for (int i=0; i<n; i++) {
@@ -138,6 +146,7 @@ unsigned Solver::getConstraintIndex(Constraint *_ptr)
 
 void Solver::reset()
 {
+    setRebuild(false);
     mapper.clear();
     const_mapper.clear();
 
@@ -146,6 +155,17 @@ void Solver::reset()
 
     matrix.clear();
     vect.clear();
+
+    qWarning() << "Calculatuion finished!";
+}
+
+void Solver::matrixInitialise()
+{
+    for (const auto& key: mapper.keys()) {
+        for (const auto& index: mapper[key]) {
+            matrix[index][index] = 1.;
+        }
+    }
 }
 
 void Solver::backMap()
@@ -170,7 +190,7 @@ QList<unsigned> Solver::addPoint(Point2D *point) {
     QList<unsigned> result;
     QList<double> parameters{point->getPos().x(), point->getPos().y()};
 
-    //!!
+    qWarning() << "Adding point " << point->getPos();
     for (const auto& parameter: parameters) {
         result.push_back(matrix.size());
         vect.resize(matrix.size()+1, 0.);
@@ -185,6 +205,7 @@ QList<unsigned> Solver::addPoint(Point2D *point) {
         for (auto &str: matrix) {
             str.resize(matrix.size(), 0.);
         }
+        matrix[result.last()][result.last()] = 1.;
     }
 
     return result;
@@ -194,23 +215,43 @@ unsigned Solver::addNewConstraint(Constraint* _constraint)
 {
     unsigned result = matrix.size();
 
+   qWarning() << "Adding constraint";
     matrix.resize(matrix.size()+1);
     for (auto &str: matrix) {
         str.resize(matrix.size(), 0.);
     }
+
     vect.resize(matrix.size(), 0.);
     if (isRebuild()) {
         vect[result] = parameters_current_vals[result] - parameters_init_vals[result];
     }
     else
     {
-        parameters_init_vals.resize(matrix.size(), 1.);
-        parameters_current_vals.resize(matrix.size(), 1.);
+        parameters_init_vals.resize(matrix.size(), lambda_begin_value);
+        parameters_current_vals.resize(matrix.size(), lambda_begin_value);
     }
     const_mapper[_constraint] = result;
 
     return result;
 }
+
+void Solver::checkMatrixBeforeExec(const std::vector<std::vector<double> > &_M)
+{
+    for(unsigned i=0; i!=_M.size(); ++i) {
+        if (_M[i] == std::vector<double>(_M[i].size(), 0.)) {
+            switch(instantTypeOnIndex(i)){
+                case(MatrixInstances::Constraint):
+                    throw DrawingRedifinedException();
+                    break;
+                case(MatrixInstances::Object):
+                case(MatrixInstances::None):
+                default:
+                    throw NotImplementedException();
+            }
+        }
+    }
+}
+
 
 //adds object to matrix and returns indicies
 QList<unsigned> Solver::addObject(object_id_t _id) {
@@ -253,8 +294,17 @@ void Solver::appendConstraint(Constraint *_constraint, QList<unsigned> _indicies
                 addSamePointConstraint(_constraint, _indicies);
             }
             break;
+        case (ConstraintType::Vertical):
+            addVerticalConstraint(_constraint, _indicies);
+            break;
+        case (ConstraintType::Horisontal):
+            addHorisontalConstraint(_constraint, _indicies);
+            break;
+        case (ConstraintType::FixedPoint):
+                addFixedConstraint(_constraint, _indicies);
+            break;
         default:
-            throw NotImplementedException();
+            throw std::runtime_error("Not implemented constraint appending");
     }
 }
 
@@ -275,6 +325,7 @@ void Solver::addSamePointConstraint(Constraint* _constraint, QList<unsigned> _in
     auto y1 = parameters_current_vals[_indicies[1]];
     auto x2 = parameters_current_vals[_indicies[2]];
     auto y2 = parameters_current_vals[_indicies[3]];
+    auto lambda = parameters_current_vals[lambda_ind];
 
     auto ix1 = _indicies[0];
     auto iy1 = _indicies[1];
@@ -288,22 +339,151 @@ void Solver::addSamePointConstraint(Constraint* _constraint, QList<unsigned> _in
     vect[lambda_ind] += (parameters_current_vals[_indicies[2]] - parameters_current_vals[_indicies[0]]) * (parameters_current_vals[_indicies[2]] - parameters_current_vals[_indicies[0]])+
         (parameters_current_vals[_indicies[3]] - parameters_current_vals[_indicies[1]]) * (parameters_current_vals[_indicies[3]] - parameters_current_vals[_indicies[1]]);
 
+    if (vect[lambda_ind] < 1e-3) {
+        vect[lambda_ind] = 0.;
+    }
+
     matrix[lambda_ind][ix1] += -2.*(x2-x1);
     matrix[lambda_ind][iy1] += -2.*(y2-y1);
     matrix[lambda_ind][ix2] += 2.*(x2-x1);
     matrix[lambda_ind][iy2] += 2.*(y2-y1);
-    matrix[ix1][ix1] += 1.+2.*parameters_current_vals[lambda_ind];
+    matrix[ix1][ix1] += 2.*parameters_current_vals[lambda_ind];
     matrix[ix1][ix2] += -2.*parameters_current_vals[lambda_ind];
     matrix[ix1][lambda_ind] += -2.*(x2-x1);
-    matrix[iy1][iy1] += 1.+2.*parameters_current_vals[lambda_ind];
+    matrix[iy1][iy1] += 2.*parameters_current_vals[lambda_ind];
     matrix[iy1][iy2] += -2.*parameters_current_vals[lambda_ind];
     matrix[iy1][lambda_ind] += -2.*(y2-y1);
-    matrix[ix2][ix2] += 1.+2.*parameters_current_vals[lambda_ind];
+    matrix[ix2][ix2] += 2.*parameters_current_vals[lambda_ind];
     matrix[ix2][ix1] += -2.*parameters_current_vals[lambda_ind];
     matrix[ix2][lambda_ind] += 2.*(x2-x1);
-    matrix[iy2][iy2] += 1.+2.*parameters_current_vals[lambda_ind];
+    matrix[iy2][iy2] += 2.*parameters_current_vals[lambda_ind];
     matrix[iy2][iy1] += -2.*parameters_current_vals[lambda_ind];
     matrix[iy2][lambda_ind] += 2.*(y2-y1);
+}
+
+void Solver::addVerticalConstraint(Constraint* _constraint, QList<unsigned> _indicies) {
+    unsigned lambda_ind;
+    if (containsConstraint(_constraint)) {
+        lambda_ind = getConstraintIndex(_constraint);
+    }
+    else {
+        if (isRebuild()) {
+            qWarning() << "Adding new constraint on rebuild!!!";
+        }
+        lambda_ind = addNewConstraint(_constraint);
+    }
+
+    auto ix1 = _indicies[0];
+    auto iy1 = _indicies[1];
+    auto ix2 = _indicies[2];
+    auto iy2 = _indicies[3];
+
+    auto x1 = parameters_current_vals[ix1];
+    auto y1 = parameters_current_vals[iy1];
+    auto x2 = parameters_current_vals[ix2];
+    auto y2 = parameters_current_vals[iy2];
+    auto lambda = parameters_current_vals[lambda_ind];
+
+    vect[lambda_ind] += (x2-x1)*(x2-x1);
+    vect[ix1] += 2*lambda*(x1-x2);
+    vect[ix2] += 2*lambda*(x2-x1);
+
+    if (vect[lambda_ind] < 1e-3) {
+        vect[lambda_ind] = 0.;
+    }
+
+    matrix[lambda_ind][ix1] += 2.*(x1-x2);
+    matrix[lambda_ind][ix2] += 2.*(x2-x1);
+    matrix[ix1][ix1] += 2.*lambda;
+    matrix[ix1][ix2] += -2.*lambda;
+    matrix[ix1][lambda_ind] += 2*(x1-x2);
+    matrix[ix2][ix2] += 2.*lambda;
+    matrix[ix2][ix1] += -2.*lambda;
+    matrix[ix2][lambda_ind] += 2*(x2-x1);
+
+}
+
+void Solver::addHorisontalConstraint(Constraint* _constraint, QList<unsigned> _indicies) {
+    unsigned lambda_ind;
+    if (containsConstraint(_constraint)) {
+        lambda_ind = getConstraintIndex(_constraint);
+    }
+    else {
+        if (isRebuild()) {
+            qWarning() << "Adding new constraint on rebuild!!!";
+        }
+        lambda_ind = addNewConstraint(_constraint);
+    }
+
+    auto ix1 = _indicies[0];
+    auto iy1 = _indicies[1];
+    auto ix2 = _indicies[2];
+    auto iy2 = _indicies[3];
+
+    auto x1 = parameters_current_vals[ix1];
+    auto y1 = parameters_current_vals[iy1];
+    auto x2 = parameters_current_vals[ix2];
+    auto y2 = parameters_current_vals[iy2];
+    auto lambda = parameters_current_vals[lambda_ind];
+
+    vect[lambda_ind] += (y2-y1)*(y2-y1);
+    vect[iy1] += 2*lambda*(y1-y2);
+    vect[iy2] += 2*lambda*(y2-y1);
+
+    if (vect[lambda_ind] < 1e-3) {
+        vect[lambda_ind] = 0.;
+    }
+
+    matrix[lambda_ind][iy1] += 2.*(y1-y2);
+    matrix[lambda_ind][iy2] += 2.*(y2-y1);
+    matrix[iy1][iy1] += 2.*lambda;
+    matrix[iy1][iy2] += -2.*lambda;
+    matrix[iy1][lambda_ind] += 2*(y1-y2);
+    matrix[iy2][iy2] += 2.*lambda;
+    matrix[iy2][iy1] += -2.*lambda;
+    matrix[iy2][lambda_ind] += 2*(y2-y1);
+}
+
+void Solver::addFixedConstraint(Constraint* _constraint, QList<unsigned> _indicies) {
+    auto ix = _indicies[0];
+    auto iy = _indicies[1];
+
+    auto x = parameters_current_vals[ix];
+    auto y = parameters_current_vals[iy];
+    auto x0 = parameters_init_vals[ix];
+    auto y0 = parameters_init_vals[iy];
+
+    if (((x-x0)*(x-x0)+(y-y0)*(y-y0)) < 1e-3 && !containsConstraint(_constraint)) {
+        return;
+    }
+
+    unsigned lambda_ind;
+    if (containsConstraint(_constraint)) {
+        lambda_ind = getConstraintIndex(_constraint);
+    }
+    else {
+        if (isRebuild()) {
+            qWarning() << "Adding new constraint on rebuild!!!";
+        }
+        lambda_ind = addNewConstraint(_constraint);
+    }
+
+    auto lambda = parameters_current_vals[lambda_ind];
+
+    vect[lambda_ind] += (x-x0)*(x-x0)+(y-y0)*(y-y0);
+    vect[ix] += 2.*lambda*(x-x0);
+    vect[iy] += 2.*lambda*(y-y0);
+
+    if (vect[lambda_ind] < 1e-6) {
+        vect[lambda_ind] = 0.;
+    }
+
+    matrix[lambda_ind][ix] += 2.*(x-x0);
+    matrix[lambda_ind][iy] += 2.*(y-y0);
+    matrix[ix][ix] += 2.*lambda;
+    matrix[ix][lambda_ind] += 2*(x-x0);
+    matrix[iy][iy] += 2.*lambda;
+    matrix[iy][lambda_ind] += 2*(y-y0);
 }
 
 void Solver::setRebuild(bool _arg)
@@ -316,8 +496,41 @@ bool Solver::isRebuild()
     return on_rebuild;
 }
 
+Solver::MatrixInstances Solver::instantTypeOnIndex(unsigned _index)
+{
+    for (const auto& ind_list: mapper.values()) {
+        if (std::find(ind_list.begin(), ind_list.end(), _index) != ind_list.end()) {
+            return MatrixInstances::Object;
+        }
+    }
+
+    for (const auto& ind: const_mapper.values()) {
+        if (_index == ind) {
+            return MatrixInstances::Constraint;
+        }
+    }
+
+    return MatrixInstances::None;
+}
+
 
 #ifdef ENABLE_DEBUG
+void Solver::debugStateOutput()
+{
+    qWarning() << "Rebuild state: " << isRebuild();
+    qWarning() << "Mapper:";
+    for (const auto& _key: mapper.keys()) {
+        qWarning() << _key << " -> " << mapper[_key];
+    }
+    qWarning();
+    qWarning() << "Const_mapper:";
+    for (const auto& _key: const_mapper.keys()){
+        qWarning() << _key << " -> " << const_mapper[_key];
+    }
+
+    exit(0);
+}
+
 void Solver::debugPrintMatrix(const std::vector<std::vector<double>>& M) {
     QDebug deb = qDebug();
 

@@ -67,7 +67,7 @@ constraint_id_t GeometryInterface::addConstraint(ConstraintType _type, const QLi
     }
 
 #ifdef ENABLE_DEBUG
-qWarning() << "Added new constraint " << const_id << " between ";
+qWarning() << "Added new constraint " << const_id << " for ";
 for (const auto& item: _list)
     qWarning() << item << " ";
 #endif
@@ -83,6 +83,31 @@ constraint_id_t GeometryInterface::makeConstraintByPtrs(ConstraintType _type, Ge
 {
     QList<object_id_t> list{this->getIdByObject(_first), this->getIdByObject(_second)};
     return addConstraint(_type, list, _value);
+}
+
+constraint_id_t GeometryInterface::createConstraint(const ConstraintType _type, const QList<GeometryObject*>& _objects, const QList<GeometryObjectType>& _aceptable_types, unsigned _number,
+                                                    const QList<double>& _value)
+{
+    QList<object_id_t> result_list;
+
+    for(const auto& object: _objects) {
+        if (std::find(_aceptable_types.begin(), _aceptable_types.end(), object->getType()) != _aceptable_types.end()) {
+            if (_number > 0) {
+                result_list.push_back(getIdByObject(object));
+                _number--;
+            }
+            else {
+                break;
+            }
+       }
+    }
+
+    if (!_number) {
+        return addConstraint(_type, result_list, _value);
+    }
+    else {
+        return 0;
+    }
 }
 
 Segment2P* GeometryInterface::findLineByPoint(Point2D* _point) {
