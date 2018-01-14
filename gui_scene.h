@@ -30,6 +30,7 @@ class GUI_Scene : public QGraphicsScene
 
     Point2D *tmp_point;
     QGraphicsLineItem  *tmp_segment;
+    QGraphicsRectItem *tmp_gpoint;
     void beginLine(QPointF);
     void endLine(QPointF, const QList<QGraphicsItem*>&);
 

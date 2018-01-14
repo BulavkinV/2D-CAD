@@ -64,10 +64,15 @@ public:
     unsigned getConstraintIndex(Constraint*);
 
     void appendConstraint(Constraint*, QList<unsigned>);
+    unsigned getLambdaIndex(Constraint*);
     void addSamePointConstraint(Constraint*, QList<unsigned>);
     void addVerticalConstraint(Constraint*, QList<unsigned>);
     void addHorisontalConstraint(Constraint*, QList<unsigned>);
     void addFixedConstraint(Constraint*, QList<unsigned>);
+    void addLengthConstraint(Constraint*, QList<unsigned>);
+    void addParallelConstraint(Constraint*, QList<unsigned>);
+    void addPerpendicularConstraint(Constraint*, QList<unsigned>);
+
 
     void setRebuild(bool);
     bool isRebuild();

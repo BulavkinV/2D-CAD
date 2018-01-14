@@ -59,6 +59,10 @@ qWarning() << "Added new segment " << new_id << " between " << first->getPos() <
 }
 
 constraint_id_t GeometryInterface::addConstraint(ConstraintType _type, const QList<object_id_t>& _list, const QList<double> _value) {
+    if (_type == ConstraintType::Parallel) {
+
+    }
+
     Constraint* ptr = new Constraint(_type, _list, const_id, _value);
     constraints.insert(const_id, ptr);
 

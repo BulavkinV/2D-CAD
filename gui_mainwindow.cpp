@@ -124,6 +124,17 @@ void GUI_MainWindow::setCurrentConstraint(ConstraintType _newct, bool writeToSta
     current_constraint = _newct;
 }
 
+double GUI_MainWindow::getParameterFromScreen(QString str)
+{
+    bool ok;
+    double d = QInputDialog::getDouble(this, str,
+                                           tr("Значение:"), 0., -10000, 10000, 2, &ok);
+    if (ok)
+        return d;
+    else
+        throw std::runtime_error("Can't get double value from screen");
+}
+
 
 void GUI_MainWindow::actionDispather(QString action)
 {

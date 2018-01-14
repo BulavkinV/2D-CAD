@@ -89,18 +89,74 @@ void GUI_Scene::mousePressEventDispather(QPointF pos, const QList<QGraphicsItem*
             }
             break;
         case(GUI_MainWindow::States::Constraints): {
-                switch(mw->getCurrentConstraint()) {
-                    case(ConstraintType::Vertical):
-                        interface->createConstraint(ConstraintType::Vertical, fromSceneToObjects(itemsAtPos), {GeometryObjectType::Segment}, 1);
+                if (!itemsAtPos.empty()) {
+                    switch(mw->getCurrentConstraint()) {
+                        case(ConstraintType::Vertical):
+                            interface->createConstraint(ConstraintType::Vertical, fromSceneToObjects(itemsAtPos), {GeometryObjectType::Segment}, 1);
+                            break;
+                        case(ConstraintType::Horisontal):
+                            interface->createConstraint(ConstraintType::Horisontal, fromSceneToObjects(itemsAtPos), {GeometryObjectType::Segment}, 1);
+                            break;
+                        case(ConstraintType::FixedPoint):
+                            interface->createConstraint(ConstraintType::FixedPoint, fromSceneToObjects(itemsAtPos), {GeometryObjectType::Point}, 1);
+                            break;
+                        case(ConstraintType::FixedLength):
+                            interface->createConstraint(ConstraintType::FixedLength, fromSceneToObjects(itemsAtPos), {GeometryObjectType::Segment}, 1, {mw->getParameterFromScreen("Введите длину:")});
+                            break;
+                        case(ConstraintType::Parallel):
+                            if (tmp_segment == Q_NULLPTR) {
+                                for (const auto& item: itemsAtPos) {
+                                    if (dynamic_cast<QGraphicsLineItem*>(item) != nullptr) {
+                                        qWarning() << "First OK";
+                                        tmp_segment = dynamic_cast<QGraphicsLineItem*>(item);
+                                        break;
+                                    }
+                                }
+                            }
+                            else {
+                                QList<QGraphicsItem*> new_items{itemsAtPos};
+                                new_items.push_front(tmp_segment);
+                                interface->createConstraint(ConstraintType::Parallel, fromSceneToObjects(new_items), {GeometryObjectType::Segment}, 2);
+                                tmp_segment = Q_NULLPTR;
+                            }
+                            break;
+                    case(ConstraintType::Perpendicular):
+                        if (tmp_segment == Q_NULLPTR) {
+                            for (const auto& item: itemsAtPos) {
+                                if (dynamic_cast<QGraphicsLineItem*>(item) != nullptr) {
+                                    qWarning() << "First OK";
+                                    tmp_segment = dynamic_cast<QGraphicsLineItem*>(item);
+                                    break;
+                                }
+                            }
+                        }
+                        else {
+                            QList<QGraphicsItem*> new_items{itemsAtPos};
+                            new_items.push_front(tmp_segment);
+                            interface->createConstraint(ConstraintType::Perpendicular, fromSceneToObjects(new_items), {GeometryObjectType::Segment}, 2);
+                            tmp_segment = Q_NULLPTR;
+                        }
                         break;
-                    case(ConstraintType::Horisontal):
-                        interface->createConstraint(ConstraintType::Horisontal, fromSceneToObjects(itemsAtPos), {GeometryObjectType::Segment}, 1);
+                    case(ConstraintType::SamePoint):
+                        if (tmp_gpoint == Q_NULLPTR) {
+                            for (const auto& item: itemsAtPos) {
+                                if (dynamic_cast<QGraphicsRectItem*>(item) != nullptr) {
+                                    qWarning() << "First OK";
+                                    tmp_gpoint = dynamic_cast<QGraphicsRectItem*>(item);
+                                    break;
+                                }
+                            }
+                        }
+                        else {
+                            QList<QGraphicsItem*> new_items{itemsAtPos};
+                            new_items.push_front(tmp_gpoint);
+                            interface->createConstraint(ConstraintType::SamePoint, fromSceneToObjects(new_items), {GeometryObjectType::Point}, 2);
+                            tmp_gpoint = Q_NULLPTR;
+                        }
                         break;
-                    case(ConstraintType::FixedPoint):
-                        interface->createConstraint(ConstraintType::FixedPoint, fromSceneToObjects(itemsAtPos), {GeometryObjectType::Point}, 1);
-                        break;
-                    default:
-                        throw NotImplementedException();
+                        default:
+                            throw NotImplementedException();
+                    }
                 }
             }
             break;

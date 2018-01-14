@@ -9,5 +9,7 @@
         <file>Resources/Length_icon.png</file>
         <file>Resources/Parallel_icon.png</file>
         <file>Resources/Perpendicular_icon.png</file>
+        <file>Resources/Horisontal_icon.png</file>
+        <file>Resources/Vertical_icon.png</file>
     </qresource>
 </RCC>

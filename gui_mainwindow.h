@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <QStatusBar>
+#include <QInputDialog>
 
 #include <constraint.h>
 
@@ -33,6 +34,8 @@ public:
     ConstraintType getCurrentConstraint();
     QString getCurrentConstraintString();
     void setCurrentConstraint(ConstraintType, bool writeToStatusBar = true);
+
+    double getParameterFromScreen(QString);
 private:
     States state;
     ConstraintType current_constraint;
