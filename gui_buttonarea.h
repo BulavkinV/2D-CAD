@@ -13,10 +13,11 @@
 
 const std::vector<QString> ba_actions{"Cursor", "Input", "Vertical",
                                       "Horisontal", "Parallel",
-                                       "Perpendicular", "Angle", "Distance",
-                                      "Fixed", "Length", "Belongs"};
+                                       "Perpendicular",
+                                      "Fixed", "Length", "SamePoint",
+                                     "Delete"};
 
-const std::vector<QString> separators_after{ba_actions[1]};
+const std::vector<QString> separators_after{ba_actions[1], ba_actions[8]};
 
 class GUI_ButtonArea : public QToolBar
 {

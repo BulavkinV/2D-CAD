@@ -34,16 +34,16 @@ void Solver::resolve(const QList<Constraint *>& _constraints)
             A[i].push_back(-b[i]);
         }
         //checkMatrixBeforeExec(A);
-        debugPrintMatrix(A);
+        //debugPrintMatrix(A);
         b = gauss(A);
-        debugPrintMatrix(A);
+        //debugPrintMatrix(A);
         if (std::isnan(b[0])) {
             qWarning() << "NaN";
             debugStateOutput();
         }
         parameters_current_vals = parameters_current_vals + b;
-        qWarning() << "Result:" << norm(b);
-        debugPrintVector(b);
+        //qWarning() << "Result:" << norm(b);
+        //debugPrintVector(b);
         exit_cond = norm(b) >= tolerance;
         rebuild(_constraints);
     } while(exit_cond);

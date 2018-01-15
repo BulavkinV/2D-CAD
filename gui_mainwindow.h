@@ -40,7 +40,7 @@ private:
     States state;
     ConstraintType current_constraint;
 signals:
-
+    void eraseSignal(bool);
 public slots:
     void actionDispather(QString);
 };

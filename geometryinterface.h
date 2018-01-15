@@ -46,6 +46,7 @@ public:
     Segment2P* findLineByPoint(Point2D* _point);
     void movePoint(Point2D *point, QPointF position);
     void replacePoint(Point2D *point, QPointF position);
-};
 
+    void eraseObjects();
+};
 #endif // GEOMETRYINTERFACE_H

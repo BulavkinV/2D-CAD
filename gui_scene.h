@@ -43,6 +43,9 @@ public:
     void mouseMoveEventDispather(QPointF);
 
     static QList<GeometryObject*> fromSceneToObjects(const QList<QGraphicsItem*>&);
+
+public slots:
+  void eraseSlot(bool);
 };
 
 #endif // GUI_SCENE_H

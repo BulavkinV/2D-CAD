@@ -40,6 +40,7 @@ public:
 
     virtual void setBlock(bool) override;
 
+    //virtual QRectF boundingRect() const override;
 
     void notused() override {}
 };

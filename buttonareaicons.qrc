@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/ButtonArea/Icons">
         <file>Resources/Angle_icon.png</file>
-        <file>Resources/Belongs_icon.png</file>
+        <file>Resources/SamePoint_icon.png</file>
         <file>Resources/Cursor_icon.png</file>
         <file>Resources/Distance_icon.png</file>
         <file>Resources/Fixed_icon.png</file>
@@ -11,5 +11,6 @@
         <file>Resources/Perpendicular_icon.png</file>
         <file>Resources/Horisontal_icon.png</file>
         <file>Resources/Vertical_icon.png</file>
+        <file>Resources/Delete_icon.png</file>
     </qresource>
 </RCC>

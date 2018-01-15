@@ -135,7 +135,6 @@ double GUI_MainWindow::getParameterFromScreen(QString str)
         throw std::runtime_error("Can't get double value from screen");
 }
 
-
 void GUI_MainWindow::actionDispather(QString action)
 {
     if (action == "Cursor") {
@@ -145,6 +144,9 @@ void GUI_MainWindow::actionDispather(QString action)
     else if (action == "Input") {
         setState(States::Input);
         setCurrentConstraint(ConstraintType::None, false);
+    }
+    else if (action == "Delete") {
+        emit eraseSignal(true);
     }
     else {
         setState(States::Constraints);
@@ -174,6 +176,9 @@ void GUI_MainWindow::actionDispather(QString action)
         }
         else if (action == "Horisontal") {
             setCurrentConstraint(ConstraintType::Horisontal);
+        }
+        else if (action == "SamePoint") {
+            setCurrentConstraint(ConstraintType::SamePoint);
         }
         else {
             setCurrentConstraint(ConstraintType::None);

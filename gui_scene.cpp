@@ -6,6 +6,7 @@ GUI_Scene::GUI_Scene(GUI_MainWindow *parent, GeometryInterface *gi): QGraphicsSc
 
     tmp_point = Q_NULLPTR;
     tmp_segment = Q_NULLPTR;
+    tmp_gpoint = Q_NULLPTR;
 }
 
 void GUI_Scene::beginLine(QPointF start_pos)
@@ -206,4 +207,11 @@ QList<GeometryObject *> GUI_Scene::fromSceneToObjects(const QList<QGraphicsItem 
         result.push_back({dynamic_cast<GeometryObject*>(item)});
     }
     return result;
+}
+
+void GUI_Scene::eraseSlot(bool _arg) {
+    if (_arg) {
+        clear();
+        interface->eraseObjects();
+    }
 }

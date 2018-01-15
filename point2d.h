@@ -7,7 +7,7 @@
 #include <cmath>
 #include <vector>
 
-const QPointF upper_left_point{-8., -8.};
+const QPointF upper_left_point{-4., -4.};
 const QPointF bottom_right_point{8., 8.};
 
 

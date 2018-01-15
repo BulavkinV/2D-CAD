@@ -35,6 +35,10 @@ void Segment2P::setBlock(bool)
     p2->setBlock(true);
 }
 
+//QRectF Segment2P::boundingRect() const {
+//    return QRectF(line().p1()+QPointF(5,5), line().p2()-QPointF(5,5));
+//}
+
 
 //QRectF Segment2P::boundingRect() const {
 //    QPolygonF nPolygon;

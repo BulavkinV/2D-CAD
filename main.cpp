@@ -37,5 +37,7 @@ int main(int argc, char *argv[])
     window.addToolBar(Qt::LeftToolBarArea, &buttons);
     window.show();
 
+    QObject::connect(&window, &GUI_MainWindow::eraseSignal, &scene, &GUI_Scene::eraseSlot);
+
     return app.exec();
 }

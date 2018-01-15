@@ -157,3 +157,30 @@ void GeometryInterface::replacePoint(Point2D *point, QPointF position) {
      if (point == list[1])
          segment->movePoint(Segment2P::PointPosition::Second, position);
 }
+
+void GeometryInterface::eraseObjects()
+{
+    new_id = 1;
+    const_id = 1;
+
+//    for (const auto& key: objects.keys()) {
+//        switch(objects[key]->getType()) {
+//            case(GeometryObjectType::Point):
+//                delete dynamic_cast<Point2D*>(objects[key]);
+//                break;
+//            case(GeometryObjectType::Segment):
+//                delete dynamic_cast<Segment2P*>(objects[key]);
+//                break;
+//            default:
+//                throw std::runtime_error("Geometry object of unknown type");
+//        }
+//        delete objects[key];
+//    }
+    objects.clear();
+//    for (const auto& key: constraints.keys()) {
+//        delete constraints[key];
+//    }
+    constraints.clear();
+
+    containsConstraints = false;
+}
